@@ -2,14 +2,16 @@ import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Profile, Strategy } from 'passport-facebook';
 
+import { AuthService } from '../auth.service'
+
 @Injectable()
 export class FacebookStrategy extends PassportStrategy(Strategy, 'facebook') {
   
-  constructor() {
+  constructor(private readonly authService: AuthService) {
     super({
       clientID: process.env.APP_ID,
       clientSecret: process.env.APP_SECRET,
-      callbackURL: 'http://localhost:3000/facebook/redirect',
+      callbackURL: 'http://localhost:3000/auth/facebook/redirect',
       scope: 'email',
       profileFields: ['emails', 'name'],
     });
@@ -26,11 +28,13 @@ export class FacebookStrategy extends PassportStrategy(Strategy, 'facebook') {
       email: emails[0].value,
       firstName: name.givenName,
       lastName: name.familyName,
+      OAuthId: id,
     };
+
+    const userData = await this.authService.validateOrRegisterFBUser(user);
     
     const payload = {
-      user,
-      accessToken,
+      ...userData
     };
 
     done(null, payload);

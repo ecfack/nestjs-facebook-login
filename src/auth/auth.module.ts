@@ -3,7 +3,8 @@ import { PassportModule } from '@nestjs/passport';
 
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { LocalStrategy } from './local.strategy';
+import { FacebookStrategy, LocalStrategy } from './strategy';
+import { FBGuard, LocalGuard, LoggedInGuard} from './guards';
 import { AuthSerializer } from './serialization.provider';
 
 @Module({
@@ -12,7 +13,7 @@ import { AuthSerializer } from './serialization.provider';
             session: true,
         }),
     ],
-    providers: [AuthService, LocalStrategy, AuthSerializer],
+    providers: [AuthService, LocalStrategy, AuthSerializer, FacebookStrategy, FBGuard, LocalGuard, LoggedInGuard],
     controllers: [AuthController],
 })
 export class AuthModule {}

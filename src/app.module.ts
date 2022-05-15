@@ -6,17 +6,13 @@ import * as passport from 'passport';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { FacebookStrategy } from './facebook.strategy';
 import { REDIS, RedisModule } from './redis';
-import { AuthService } from './auth/auth.service';
-import { AuthController } from './auth/auth.controller';
 import { AuthModule } from './auth/auth.module';
-import { FBGuard } from './fb.guard';
 
 @Module({
   imports: [RedisModule, AuthModule],
   controllers: [AppController],
-  providers: [AppService, FacebookStrategy, Logger, FBGuard],
+  providers: [AppService, Logger],
 })
 export class AppModule implements NestModule{
   //TODO: redis client type
@@ -35,7 +31,7 @@ export class AppModule implements NestModule{
         cookie: {
           sameSite: true,
           httpOnly: false,
-          maxAge: 60*1000,
+          maxAge: 5*60*1000,
         },
       }),
       passport.initialize(),

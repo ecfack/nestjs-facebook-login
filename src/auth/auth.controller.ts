@@ -1,6 +1,7 @@
-import { Body, Post, Req, UseGuards,Controller } from '@nestjs/common';
+import { Body, Get, Post, Req, HttpStatus, UseGuards,Controller } from '@nestjs/common';
+import { Request } from 'express';
 
-import { LocalGuard } from '../local.guard';
+import { LocalGuard, FBGuard, LoggedInGuard } from './guards';
 import { AuthService } from './auth.service';
 import { LoginUserDto, RegisterUserDto } from './dto';
 
@@ -16,7 +17,60 @@ export class AuthController {
     @UseGuards(LocalGuard)
     @Post('login')
     loginUser(@Req() req, @Body() user: LoginUserDto) {
-        console.log(req.user)
-        return req.session;
+        return {
+            statusCode: HttpStatus.OK,
+            payload: {
+                user: req.user,
+                sessionID: req.sessionID,
+                session: req.session
+            }
+        };
+    }
+
+    @Get('/facebook')
+    @UseGuards(FBGuard)
+    async facebookLogin(): Promise<any> {
+        return HttpStatus.OK;
+    }
+
+    @Get('/facebook/redirect')
+    @UseGuards(FBGuard)
+    async facebookLoginRedirect(@Req() req: Request): Promise<any> {
+        return {
+            statusCode: HttpStatus.OK,
+            payload: {
+                user: req.user,
+                sessionID: req.sessionID,
+                session: req.session
+            }
+        };
+    }
+
+    @Get('logout')
+    @UseGuards(LoggedInGuard)
+    logout(@Req() req: Request) {
+        req.logOut();
+        req.session.destroy( (err) =>{
+
+        });
+        return {
+            statusCode: HttpStatus.OK,
+            payload: {
+                message: 'Logout success!'
+            }
+        };
+    }
+
+    @Get('protected')
+    @UseGuards(LoggedInGuard)
+    guardedRoute(@Req() req: Request) {
+        return {
+            statusCode: HttpStatus.OK,
+            payload: {
+                user: req.user,
+                sessionID: req.sessionID,
+                session: req.session
+            }
+        };
     }
 }
