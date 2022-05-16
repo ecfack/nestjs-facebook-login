@@ -1,4 +1,4 @@
-import { Body, Get, Post, Req, HttpStatus, UseGuards,Controller } from '@nestjs/common';
+import { Body, Get, Post, Req, HttpStatus, UseGuards,Controller, Redirect } from '@nestjs/common';
 import { Request } from 'express';
 
 import { LocalGuard, FBGuard, LoggedInGuard } from './guards';
@@ -33,17 +33,11 @@ export class AuthController {
         return HttpStatus.OK;
     }
 
+    @Redirect('/auth/protected', 302)
     @Get('/facebook/redirect')
     @UseGuards(FBGuard)
     async facebookLoginRedirect(@Req() req: Request): Promise<any> {
-        return {
-            statusCode: HttpStatus.OK,
-            payload: {
-                user: req.user,
-                sessionID: req.sessionID,
-                session: req.session
-            }
-        };
+        return ;
     }
 
     @Get('logout')
@@ -67,9 +61,7 @@ export class AuthController {
         return {
             statusCode: HttpStatus.OK,
             payload: {
-                user: req.user,
-                sessionID: req.sessionID,
-                session: req.session
+                user: req.user
             }
         };
     }

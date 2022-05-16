@@ -40,7 +40,6 @@ export class AuthService {
     async findById(id: number): Promise<User> {
         const user  = this.users.find(u => u.id === id);
         if(!user) {
-            console.log(this.users,id)
             throw new BadRequestException('No user found');
         }
         return user;

@@ -15,8 +15,13 @@ export class AuthSerializer extends PassportSerializer {
     }
 
     async deserializeUser(payload: {id: number}, done: (err: Error, user: User) => void) {
-        const user = await this.authService.findById(payload.id);
-        console.log('deserialize called');
-        done(null, user);
+        try {
+            const user = await this.authService.findById(payload.id);
+            console.log('deserialize called');
+            done(null, user);
+        }
+        catch (err) {
+            done(err,null);
+        }
     }
 }
